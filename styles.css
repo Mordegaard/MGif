@@ -1,0 +1,127 @@
+body {
+  font: 20px Arial, sans-serif;
+  margin: 0;
+  background: rgb(250,250,255);
+}
+
+.flexed {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.jsgif {
+  display: none;
+}
+
+input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+#sectionOverflow {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 0;
+}
+
+.main {
+  width: 100%;
+  height: 100vh;
+  flex-direction: column;
+}
+
+.main .frames-container {
+  width: 90%;
+  margin-top: 300px;
+  overflow-x: auto;
+  border: 3px solid #8a8a8a;
+  padding: 12px 0px;
+  background: white;
+  box-shadow: 3px 3px 24px -14px black;
+  z-index: 1;
+}
+.main .frames-container::-webkit-scrollbar {
+  height: 10px;
+}
+.main .frames-container::-webkit-scrollbar-thumb {
+  background: #8a8a8a;
+}
+.main #frames {
+  height: 120px;
+  justify-content: start;
+  scrollbar-width: thin;
+  margin: 0px 12px;
+  user-select: none;
+}
+.main #frames .frame {
+  height: 100%;
+  margin: 0px 10px;
+  position: relative;
+  z-index: 0;
+}
+.main #frames .frame .frame-overflow {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+  color: white;
+  visibility: hidden;
+  pointer-events: none;
+}
+.main #frames .frame:hover .frame-overflow {
+  visibility: visible;
+}
+.main #frames img.frame-thumbnail {
+  height: 100%;
+}
+.main #frames .add-frame-btn {
+  position: relative;
+  height: 100%;
+  min-width: 3px;
+  background: #348bee;
+  margin: 0px 4px;
+  z-index: 1;
+}
+.main #frames .add-frame-btn div {
+  position: absolute;
+  top: 50%; left: 50%;
+  width: 22px; height: 22px;
+  transform: translate(-50%, -50%);
+  background: #348bee;
+  border-radius: 50%;
+  cursor: pointer;
+  color: white;
+}
+.main #frames .add-frame-btn div:hover {
+  transform: translate(-50%, -50%) scale(2);
+}
+
+.main #frameInfo {
+  position: fixed;
+  flex-direction: column;
+  background: white;
+  box-shadow: 3px 3px 16px -10px black;
+  padding: 0px 20px 20px 20px;
+  transform: translate(-30%, -100%);
+  visibility: hidden;
+  z-index: 2;
+}
+.main #frameInfo img {
+  height: 250px;
+}
+.main #frameInfo input {
+  border: none;
+  width: 50px;
+  padding: 1px 3px;
+  text-align: right;
+  font: 20px Arial, sans-serif;
+}
+.main #frameInfo input:focus, .main #frameInfo input:hover {
+  background: rgb(235,235,242);
+  outline: none;
+}

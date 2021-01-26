@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+  <head>
+    <meta content='width=device-width, initial-scale=1' name='viewport'/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <title>MGif</title>
+    <link href="styles.css" rel="stylesheet"></link>
+    <script type="text/javascript" src="scripts/LZWEncoder.js"></script>
+    <script type="text/javascript" src="scripts/NeuQuant.js"></script>
+    <script type="text/javascript" src="scripts/GIFEncoder.js"></script>
+    <script type="text/javascript" src="scripts/libgif.js"></script>
+    <script type="text/javascript" src="scripts/rubbable.js"></script>
+    <script type="text/javascript" src="scripts/mainCode.js"></script>
+  </head>
+  <body>
+    <section class="main flexed">
+      <div id="sectionOverflow"></div>
+      <img id="gif" src="example.gif" style="height: 18%; margin-bottom: 30px;"/>
+      <div id="frameInfo" class="flexed">
+        <h3 id="frameNumber">FRAME-NUM</h3>
+        <img id="bigFrameThumbnail"/>
+        <div class="flexed">
+        </div>
+      </div>
+      <div class="frames-container"><div id="frames" class="flexed"></div>
+      </div>
+    </section>
+  </body>
+</html>
