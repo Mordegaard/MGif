@@ -42,7 +42,8 @@ input[type=number] {
   border: 3px solid #8a8a8a;
   padding: 12px 0px;
   background: white;
-  box-shadow: 3px 3px 24px -14px black;
+  box-shadow: 3px 3px 18px -10px black;
+  border-radius: 8px;
   z-index: 1;
 }
 .main .frames-container::-webkit-scrollbar {
@@ -106,6 +107,7 @@ input[type=number] {
   flex-direction: column;
   background: white;
   box-shadow: 3px 3px 16px -10px black;
+  border-radius: 16px;
   padding: 0px 20px 20px 20px;
   transform: translate(-30%, -100%);
   visibility: hidden;
@@ -124,4 +126,78 @@ input[type=number] {
 .main #frameInfo input:focus, .main #frameInfo input:hover {
   background: rgb(235,235,242);
   outline: none;
+}
+
+#overflowContainer {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  z-index: 99;
+  visibility: hidden;
+}
+#overflowContainer.visible {
+  visibility: visible;
+}
+#overflowContainer #overflowDark {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+#overflow {
+  padding: 20px;
+  background: white;
+  border-radius: 18px;
+  position: relative;
+  box-shadow: 3px 3px 24px -12px black;
+  transform: scale(1.2);
+  transition: transform 0.3s;
+}
+#overflowContainer.visible #overflow {
+  transform: none;
+}
+#overflowContainer .overflow-container {
+  flex-direction: column;
+}
+#overflow h2 {
+  padding: 0px 24px 3px 24px;
+  border-bottom: 4px solid #8a8a8a;
+}
+
+label.file-container {
+  border-radius: 666px;
+  padding: 3px 9px;
+  border: 3px solid #348bee;
+  color: #348bee;
+}
+label.file-container.selected {
+  background: #348bee;
+  box-shadow: 2px 2px 12px -6px black;
+  color: white;
+}
+label.file-container span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+  display: inline-block;
+}
+label.file-container input[type="file"], div.radio-container input[type="radio"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
+div.radio-container {display: flex; margin: 0px 20px;}
+div.radio-container label {
+  display: block;
+  min-width: 14px; min-height: 14px;
+  border-radius: 50%;
+  border: 3px solid #8a8a8a;
+  position: relative;
+}
+div.radio-container input:checked + label {
+  border-color: white;
+  background: #348bee;
+  box-shadow: 0px 0px 0px 2px #348bee;
 }

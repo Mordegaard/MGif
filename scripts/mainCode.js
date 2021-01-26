@@ -9,6 +9,16 @@ function id(node) {
 function cl(node) {
   return document.getElementsByClassName(node);
 }
+function toggleVisible(block) {
+  if ( block.classList.contains("visible") ) {block.classList.remove("visible"); return false;}
+  else {block.classList.add("visible"); return true;}
+}
+function openOverflowBox(name) {
+  toggleVisible(id("overflowContainer"));
+  var block = id("overflow");
+  for (var i=0; i<block.children.length; i++) block.children[i].style.display = "none";
+  id(name).style.display = "flex";
+}
 
 window.onload = function() {
   var selectedFrame = null;
@@ -53,6 +63,11 @@ window.onload = function() {
          bl.style.left = this.getBoundingClientRect().left + 'px';
        });
      });
+     [].forEach.call(cl("add-frame-btn"), function(el, ind){
+       el.addEventListener("click", function(){
+         openOverflowBox("uploadImageContainer");
+       });
+     });
 	});
 
   function generateGif() {
@@ -76,5 +91,24 @@ window.onload = function() {
     encoder.download("MGif.gif");
     console.log("Gif generation has finished");
   }
+
+  id("uploadImageInput").addEventListener("input", function(e){
+    var par = this.parentElement;
+    par.classList.add("selected");
+    console.log(this.files);
+    par.getElementsByTagName("span")[0].innerText = this.files[0].name;
+  });
+
+  id("overflowDark").addEventListener("click", function(){
+    toggleVisible(this.parentElement);
+  });
+
+  id("frames").parentElement.addEventListener("wheel", function(event) {
+
+      this.scrollLeft += (event.deltaY * 3);
+
+      event.preventDefault();
+
+   });
 
 }
