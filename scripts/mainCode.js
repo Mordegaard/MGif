@@ -22,6 +22,7 @@ function openOverflowBox(name) {
 
 window.onload = function() {
   var selectedFrame = null;
+  var isDeleting = false;
   id("sectionOverflow").addEventListener("mouseenter",function(){
     id("frameInfo").style.visibility = "hidden";
   });
@@ -53,14 +54,17 @@ window.onload = function() {
        addBlock.innerHTML = `<div class="flexed">+</div>`;
        id("frames").append(addBlock);
      }
-     [].forEach.call(cl("frame-thumbnail"), function(el, ind){
+     [].forEach.call(cl("frame-thumbnail"), function(el,ind,arr){
        el.addEventListener("mouseover", function(){
-         id("frameNumber").innerText = "Кадр #"+(ind+1);
-         id("bigFrameThumbnail").src = this.src;
-         var bl = id("frameInfo");
-         bl.style.visibility = "visible";
-         bl.style.top = this.getBoundingClientRect().top + 'px';
-         bl.style.left = this.getBoundingClientRect().left + 'px';
+         if (!isDeleting) {
+           id("frameNumber").innerText = "Кадр #"+(ind+1);
+           id("bigFrameThumbnail").src = this.src;
+           var bl = id("frameInfo");
+           bl.style.visibility = "visible";
+           bl.style.top = this.getBoundingClientRect().top + 'px';
+           bl.style.left = this.getBoundingClientRect().left + 'px';
+           selectedFrame = [].indexOf.call(arr, this);
+         }
        });
      });
      [].forEach.call(cl("add-frame-btn"), function(el, ind){
@@ -69,6 +73,18 @@ window.onload = function() {
        });
      });
 	});
+
+  Image.prototype.download = function() {
+    var canv = document.createElement('canvas');
+    var c = canv.getContext('2d');
+    canv.width = gif.get_canvas().width;
+    canv.height = gif.get_canvas().height;
+    c.drawImage(this, 0, 0);
+    var link = document.createElement('a');
+    link.download = this.getAttribute('id') + ".png";
+    link.href = canv.toDataURL();
+    link.click();
+  }
 
   function generateGif() {
     console.log("Gif generation started");
@@ -104,11 +120,22 @@ window.onload = function() {
   });
 
   id("frames").parentElement.addEventListener("wheel", function(event) {
-
       this.scrollLeft += (event.deltaY * 3);
-
       event.preventDefault();
+   });
 
+   id("deleteFrame").addEventListener("click", function(){
+     isDeleting = true;
+     id("frameInfo").style.visibility = "hidden";
+     var fr = cl("frame")[selectedFrame];
+     cl("add-frame-btn")[selectedFrame].remove();
+     fr.classList.add("removed");
+     fr.style.marginLeft = "-" + gif.get_canvas().width / gif.get_canvas().height * fr.offsetHeight + 'px';
+     setTimeout(()=>{fr.remove(); isDeleting = false;},250);
+   });
+
+   id("downloadFrame").addEventListener("click", function(){
+     cl("frame")[selectedFrame].getElementsByTagName('img')[0].download();
    });
 
 }
