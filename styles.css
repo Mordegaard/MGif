@@ -2,6 +2,8 @@ body {
   font: 20px Arial, sans-serif;
   margin: 0;
   background: rgb(250,250,255);
+  flex-direction: column;
+  height: 100vh;
 }
 
 .flexed {
@@ -19,7 +21,89 @@ input::-webkit-outer-spin-button, input::-webkit-inner-spin-button {
   margin: 0;
 }
 input[type=number] {
+  outline: none;
   -moz-appearance: textfield;
+  border: none;
+  padding: 2px 1px;
+  width: 40px;
+  border-bottom: 3px solid #8a8a8a;
+  text-align: right;
+  font: 20px Arial;
+}
+input[type=number]:focus {
+  background: #348bee22;
+  border-color: #348bee;
+}
+label.file-container span, #openFrameSequenceContainer {
+  border-radius: 12px;
+  padding: 3px 9px;
+  border: 3px solid #8a8a8a;
+  color: #8a8a8a;
+  cursor: pointer;
+}
+label.file-container.selected span {
+  background: #348bee;
+  border-color: #348bee;
+  box-shadow: 2px 2px 12px -6px black;
+  color: white;
+}
+label.file-container span {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 280px;
+  display: inline-block;
+}
+label.file-container input[type="file"], div.radio-container input[type="radio"] {
+  opacity: 0;
+  width: 0;
+  height: 0;
+  margin: 0;
+}
+label.text-container {
+  position: relative;
+}
+label.text-container input[type="text"] {
+  width: 400px;
+  height: 30px;
+  border: 3px solid #8a8a8a;
+  border-radius: 12px;
+  font: 20px Arial, sans-serif;
+  padding: 2px 8px;
+  outline: none;
+}
+label.text-container input[type="text"]:focus {
+  border-color: #348bee;
+}
+label.text-container div {
+  position: absolute;
+  right: 0px; top: 0px;
+  width: 40px; height: 40px;
+  background: #8a8a8a;
+  border-radius: 0px 12px 12px 0px;
+  color: white;
+  font-size: 1.33em;
+  user-select: none;
+  cursor: pointer;
+}
+label.text-container div:active {
+  font-size: 1em;
+}
+label.text-container input[type="text"]:focus + div {
+  background: #348bee;
+}
+div.radio-container {display: flex; margin: 0px 20px;}
+div.radio-container label {
+  display: block;
+  min-width: 14px; min-height: 14px;
+  border-radius: 50%;
+  border: 3px solid #8a8a8a;
+  position: relative;
+}
+div.radio-container input:checked + label {
+  border-color: white;
+  background: #348bee;
+  box-shadow: 0px 0px 0px 2px #348bee;
 }
 
 #sectionOverflow {
@@ -29,15 +113,34 @@ input[type=number] {
   z-index: 0;
 }
 
-.main {
+header.hdr {
   width: 100%;
-  height: 100vh;
-  flex-direction: column;
+  height: 8%;
+  padding: 40px 0px;
+  border-bottom: 3px solid #8a8a8a;
+  justify-content: space-between;
+}
+header.hdr .logo, header.hdr .inputs {
+  flex-wrap: wrap;
+  margin: 0px 60px;
+  z-index: 1;
+}
+header.hdr .inputs p {
+  color: #8a8a8a;
+  margin: 0px 16px;
 }
 
-.main .frames-container {
+.main {
+  width: 100%;
+  height: 92%;
+  flex-direction: column;
+  overflow: auto;
+  justify-content: flex-end;
+}
+
+.main .frames-container, .main .options-container {
+  margin: 30px 0px;
   width: 90%;
-  margin-top: 300px;
   overflow-x: auto;
   border: 3px solid #8a8a8a;
   padding: 12px 0px;
@@ -133,6 +236,18 @@ input[type=number] {
   outline: none;
 }
 
+.main .options-container {
+  justify-content: space-evenly;
+}
+.main .options-container .gif-delay-span {
+  padding: 2px 0px;
+  border-bottom: 3px solid #8a8a8a;
+}
+.main .options-container input:focus + .gif-delay-span {
+  background: #348bee22;
+  border-color: #348bee;
+}
+
 #overflowContainer {
   position: fixed;
   top: 0; left: 0;
@@ -164,47 +279,9 @@ input[type=number] {
 #overflowContainer .overflow-container {
   flex-direction: column;
 }
-#overflow h2 {
+#overflow h3 {
   padding: 0px 24px 3px 24px;
   border-bottom: 4px solid #8a8a8a;
-}
-
-label.file-container {
-  border-radius: 666px;
-  padding: 3px 9px;
-  border: 3px solid #348bee;
-  color: #348bee;
-}
-label.file-container.selected {
-  background: #348bee;
-  box-shadow: 2px 2px 12px -6px black;
-  color: white;
-}
-label.file-container span {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 280px;
-  display: inline-block;
-}
-label.file-container input[type="file"], div.radio-container input[type="radio"] {
-  opacity: 0;
-  width: 0;
-  height: 0;
-  margin: 0;
-}
-div.radio-container {display: flex; margin: 0px 20px;}
-div.radio-container label {
-  display: block;
-  min-width: 14px; min-height: 14px;
-  border-radius: 50%;
-  border: 3px solid #8a8a8a;
-  position: relative;
-}
-div.radio-container input:checked + label {
-  border-color: white;
-  background: #348bee;
-  box-shadow: 0px 0px 0px 2px #348bee;
 }
 
 .btn {
@@ -222,4 +299,8 @@ div.radio-container input:checked + label {
 }
 .btn:hover svg {
   color: white;
+}
+
+#openFrameSequenceContainer {
+
 }
