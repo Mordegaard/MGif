@@ -1,7 +1,7 @@
 body {
   font: 20px Arial, sans-serif;
   margin: 0;
-  background: rgb(250,250,255);
+  background: white;
   flex-direction: column;
   height: 100vh;
 }
@@ -34,16 +34,16 @@ input[type=number]:focus {
   background: #348bee22;
   border-color: #348bee;
 }
+label {display: flex;}
 label.file-container span, #openFrameSequenceContainer {
   border-radius: 12px;
-  padding: 3px 9px;
-  border: 3px solid #8a8a8a;
-  color: #8a8a8a;
+  padding: 6px 9px;
+  background: #cdcdcd;
+  color: #5f5f5f;
   cursor: pointer;
 }
 label.file-container.selected span {
   background: #348bee;
-  border-color: #348bee;
   box-shadow: 2px 2px 12px -6px black;
   color: white;
 }
@@ -82,7 +82,7 @@ label.text-container div {
   background: #8a8a8a;
   border-radius: 0px 12px 12px 0px;
   color: white;
-  font-size: 1.33em;
+  font-size: 2.5em;
   user-select: none;
   cursor: pointer;
 }
@@ -117,7 +117,7 @@ header.hdr {
   width: 100%;
   height: 8%;
   padding: 40px 0px;
-  border-bottom: 3px solid #8a8a8a;
+  border-bottom: 1px solid #cdcdcd;
   justify-content: space-between;
 }
 header.hdr .logo, header.hdr .inputs {
@@ -139,28 +139,29 @@ header.hdr .inputs p {
 }
 
 .main .frames-container, .main .options-container {
-  margin: 30px 0px;
+  border: 1px solid #cdcdcd;
+  margin: 24px 0px;
   width: 90%;
   overflow-x: auto;
-  border: 3px solid #8a8a8a;
-  padding: 12px 0px;
+  padding: 8px;
   background: white;
-  box-shadow: 3px 3px 18px -10px black;
-  border-radius: 8px;
+  border-radius: 10px;
   z-index: 1;
-}
-.main .frames-container::-webkit-scrollbar {
-  height: 10px;
-}
-.main .frames-container::-webkit-scrollbar-thumb {
-  background: #8a8a8a;
 }
 .main #frames {
   height: 120px;
   justify-content: start;
   scrollbar-width: thin;
-  margin: 0px 12px;
+  padding: 10px 10px;
   user-select: none;
+  overflow-x: auto;
+}
+.main #frames::-webkit-scrollbar {
+  height: 10px;
+}
+.main #frames::-webkit-scrollbar-thumb {
+  background: #cdcdcd;
+  border-radius: 666px;
 }
 .main #frames .frame {
   height: 100%;
@@ -216,13 +217,12 @@ header.hdr .inputs p {
   background: white;
   box-shadow: 3px 3px 16px -10px black;
   border-radius: 16px;
-  padding: 0px 20px;
   transform: translate(-30%, -100%);
   visibility: hidden;
   z-index: 2;
 }
 .main #frameInfo #bigFrameThumbnail {
-  height: 250px;
+  height: 268px;
 }
 .main #frameInfo input {
   border: none;
@@ -289,6 +289,8 @@ header.hdr .inputs p {
   width: 36px; height: 36px;
   border-radius: 666px;
   box-shadow: 2px 2px 10px -5px black;
+  color: #348bee;
+  user-select: none;
 }
 .btn svg {
   width: 22px;
@@ -297,10 +299,16 @@ header.hdr .inputs p {
 .btn:hover {
   background: currentColor;
 }
-.btn:hover svg {
+.btn:hover span, .btn:hover svg {
   color: white;
 }
 
-#openFrameSequenceContainer {
-
+#downloadGif {
+  border: none;
+  padding: 6px 15px;
+  background: #348bee;
+  color: white;
+  font: 22px Arial;
+  border-radius: 666px;
+  box-shadow: 2px 2px 12px -6px black;
 }

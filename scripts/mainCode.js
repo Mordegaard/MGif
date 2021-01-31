@@ -55,9 +55,22 @@ window.onload = function() {
     canv.height = gif.get_canvas().height;
     c.drawImage(this, 0, 0);
     var link = document.createElement('a');
-    link.download = this.getAttribute('id') + ".png";
+    link.download = "frame" + (frame.selectedFrame+1) + ".png";
     link.href = canv.toDataURL();
     link.click();
+  }
+
+  function frameThumbnailEvent() {
+    if (!isDeleting) {
+      frame.selectedFrame = [].indexOf.call(cl("frame-thumbnail"), this);
+      id("frameNumber").innerText = "Кадр #"+(frame.selectedFrame+1);
+      this.parentElement.getElementsByClassName("frame-overflow")[0].innerText = "Кадр #"+(frame.selectedFrame+1);
+      id("bigFrameThumbnail").src = this.src;
+      var bl = id("frameInfo");
+      bl.style.visibility = "visible";
+      bl.style.top = this.getBoundingClientRect().top + 'px';
+      bl.style.left = this.getBoundingClientRect().left + 'px';
+    }
   }
 
   function generateGif() {
@@ -100,7 +113,7 @@ window.onload = function() {
     toggleVisible(this.parentElement);
   });
 
-  id("frames").parentElement.addEventListener("wheel", function(event) {
+  id("frames").addEventListener("wheel", function(event) {
       this.scrollLeft += (event.deltaY * 3);
       event.preventDefault();
    });
@@ -186,7 +199,7 @@ window.onload = function() {
            var imgCont = document.createElement('div');
            imgCont.classList.add("frame");
            imgCont.innerHTML = `
-            <div class="frame-overflow flexed">Кадр #${ind+1}</div>
+            <div class="frame-overflow flexed"></div>
            `;
            imgCont.prepend(img);
            id("frames").append(imgCont);
@@ -194,17 +207,10 @@ window.onload = function() {
            addBlock.classList.add("add-frame-btn");
            addBlock.innerHTML = `<div class="flexed">+</div>`;
            id("frames").append(addBlock);
-           img.addEventListener("mouseover", function(){
-             if (!isDeleting) {
-               id("frameNumber").innerText = "Кадр #"+(ind+1);
-               id("bigFrameThumbnail").src = this.src;
-               var bl = id("frameInfo");
-               bl.style.visibility = "visible";
-               bl.style.top = this.getBoundingClientRect().top + 'px';
-               bl.style.left = this.getBoundingClientRect().left + 'px';
-               frame.selectedFrame = [].indexOf.call(arr, this);
-             }
-           });
+           img.addEventListener("mouseover", frameThumbnailEvent);
+           if (ind == arr.length - 1) {
+             frame.totalFrameCount = arr.length;
+           }
          }
          img.src = reader.result;
        }
@@ -245,9 +251,34 @@ window.onload = function() {
      openOverflowBox("uploadSequenceContainer");
    });
 
+   id("toLeftFrame").addEventListener("click", function(){
+     if (frame.selectedFrame > 0) {
+       var btn = cl("add-frame-btn")[frame.selectedFrame+1];
+       var th = cl("frame")[frame.selectedFrame];
+       var prev = cl("frame")[frame.selectedFrame-1];
+       var par = th.parentElement;
+       par.insertBefore(th, prev);
+       par.insertBefore(prev, btn);
+       id("bigFrameThumbnail").src = cl("frame-thumbnail")[frame.selectedFrame].src;
+     }
+   });
+
+   id("toRightFrame").addEventListener("click", function(){
+     if (frame.selectedFrame < frame.totalFrameCount-1) {
+       var btn = cl("add-frame-btn")[frame.selectedFrame+2];
+       var th = cl("frame")[frame.selectedFrame];
+       var next = cl("frame")[frame.selectedFrame+1];
+       var par = th.parentElement;
+       par.insertBefore(next, th);
+       par.insertBefore(th, btn);
+       id("bigFrameThumbnail").src = cl("frame-thumbnail")[frame.selectedFrame].src;
+     }
+   });
+
    function gifCallback() {
      console.log('gif is loaded. Number of frames: ' + gif.get_length());
      frame.width = gif.get_canvas().width; frame.height = gif.get_canvas().height;
+     frame.totalFrameCount = gif.get_length();
      var mDelay = id("gifDelay").getAttribute("min");
      gif.get_delays[0] >= mDelay ? id("gifDelay").value = gif.get_delays[0] : id("gifDelay").value = mDelay;
      var addBlock = document.createElement('div');
@@ -263,7 +294,7 @@ window.onload = function() {
        var imgCont = document.createElement('div');
        imgCont.classList.add("frame");
        imgCont.innerHTML = `
-        <div class="frame-overflow flexed">Кадр #${i+1}</div>
+        <div class="frame-overflow flexed"></div>
        `;
        imgCont.prepend(img);
        id("frames").append(imgCont);
@@ -273,17 +304,7 @@ window.onload = function() {
        id("frames").append(addBlock);
      }
      [].forEach.call(cl("frame-thumbnail"), function(el,ind,arr){
-       el.addEventListener("mouseover", function(){
-         if (!isDeleting) {
-           id("frameNumber").innerText = "Кадр #"+(ind+1);
-           id("bigFrameThumbnail").src = this.src;
-           var bl = id("frameInfo");
-           bl.style.visibility = "visible";
-           bl.style.top = this.getBoundingClientRect().top + 'px';
-           bl.style.left = this.getBoundingClientRect().left + 'px';
-           frame.selectedFrame = [].indexOf.call(arr, this);
-         }
-       });
+       el.addEventListener("mouseover", frameThumbnailEvent);
      });
      [].forEach.call(cl("add-frame-btn"), function(el, ind){
        el.addEventListener("click", function(){
