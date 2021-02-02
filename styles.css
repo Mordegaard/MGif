@@ -26,7 +26,7 @@ input[type=number] {
   border: none;
   padding: 2px 1px;
   width: 40px;
-  border-bottom: 3px solid #8a8a8a;
+  border-bottom: 1px solid #8a8a8a;
   text-align: right;
   font: 20px Arial;
 }
@@ -125,7 +125,7 @@ header.hdr .logo, header.hdr .inputs {
   margin: 0px 60px;
   z-index: 1;
 }
-header.hdr .inputs p {
+header.hdr .inputs p, #uploadImageContainer p {
   color: #8a8a8a;
   margin: 0px 16px;
 }
@@ -139,14 +139,21 @@ header.hdr .inputs p {
 }
 
 .main .frames-container, .main .options-container {
+  position: relative;
   border: 1px solid #cdcdcd;
   margin: 24px 0px;
   width: 90%;
-  overflow-x: auto;
   padding: 8px;
   background: white;
   border-radius: 10px;
   z-index: 1;
+}
+.main #gifInfo {
+  position: absolute;
+  left: 0;
+  top: 105%;
+  color: #8a8a8a;
+  font-size: 0.66em;
 }
 .main #frames {
   height: 120px;
@@ -173,6 +180,12 @@ header.hdr .inputs p {
 .main #frames .frame.removed {
   transform: translateX(50%) scaleX(0);
   margin: 0;
+}
+.main #frames .frame.to-left {
+  transform: translateX(calc(-100% - 30px));
+}
+.main #frames .frame.to-right {
+  transform: translateX(calc(100% + 30px));
 }
 .main #frames .frame .frame-overflow {
   position: absolute;
@@ -239,11 +252,11 @@ header.hdr .inputs p {
 .main .options-container {
   justify-content: space-evenly;
 }
-.main .options-container .gif-delay-span {
+.main .options-container .input-end {
   padding: 2px 0px;
-  border-bottom: 3px solid #8a8a8a;
+  border-bottom: 1px solid #8a8a8a;
 }
-.main .options-container input:focus + .gif-delay-span {
+.main .options-container input:focus + .input-end {
   background: #348bee22;
   border-color: #348bee;
 }
@@ -311,4 +324,5 @@ header.hdr .inputs p {
   font: 22px Arial;
   border-radius: 666px;
   box-shadow: 2px 2px 12px -6px black;
+  cursor: pointer;
 }
