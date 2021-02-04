@@ -1,5 +1,10 @@
+@keyframes toast {
+  0% {transform: translateY(100%);}
+  100% {transform: translateY(-30px);}
+}
+
 body {
-  font: 20px Arial, sans-serif;
+  font: 18px Arial, sans-serif;
   margin: 0;
   background: white;
   flex-direction: column;
@@ -25,10 +30,10 @@ input[type=number] {
   -moz-appearance: textfield;
   border: none;
   padding: 2px 1px;
-  width: 40px;
+  width: 60px;
   border-bottom: 1px solid #8a8a8a;
   text-align: right;
-  font: 20px Arial;
+  font: 18px Arial;
 }
 input[type=number]:focus {
   background: #348bee22;
@@ -68,7 +73,7 @@ label.text-container input[type="text"] {
   height: 30px;
   border: 3px solid #8a8a8a;
   border-radius: 12px;
-  font: 20px Arial, sans-serif;
+  font: 18px Arial, sans-serif;
   padding: 2px 8px;
   outline: none;
 }
@@ -125,9 +130,14 @@ header.hdr .logo, header.hdr .inputs {
   margin: 0px 60px;
   z-index: 1;
 }
+header.hdr .logo {cursor: pointer;}
+header.hdr .logo span {
+  font-size: 2.85em;
+  font-weight: 800;
+}
 header.hdr .inputs p, #uploadImageContainer p {
   color: #8a8a8a;
-  margin: 0px 16px;
+  margin: 0px 12px;
 }
 
 .main {
@@ -242,7 +252,7 @@ header.hdr .inputs p, #uploadImageContainer p {
   width: 50px;
   padding: 1px 3px;
   text-align: right;
-  font: 20px Arial, sans-serif;
+  font: 18px Arial, sans-serif;
 }
 .main #frameInfo input:focus, .main #frameInfo input:hover {
   background: rgb(235,235,242);
@@ -316,7 +326,7 @@ header.hdr .inputs p, #uploadImageContainer p {
   color: white;
 }
 
-#downloadGif {
+#downloadGif, #applySequences {
   border: none;
   padding: 6px 15px;
   background: #348bee;
@@ -325,4 +335,38 @@ header.hdr .inputs p, #uploadImageContainer p {
   border-radius: 666px;
   box-shadow: 2px 2px 12px -6px black;
   cursor: pointer;
+}
+
+#sequences {
+  flex-wrap: wrap;
+  max-width: 800px;
+}
+#sequences div {
+  margin: 6px;
+  cursor: move;
+}
+#sequences img {
+  max-width: 150px;
+  max-height: 150px;
+}
+#sequences .draggable img {
+  filter: saturate(0);
+  opacity: 0.666;
+}
+
+#toastContainer {
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+}
+#toastContainer .toast {
+  margin-bottom: 5px;
+  padding: 8px 18px;
+  border-radius: 666px;
+  background: white;
+  animation: toast 0.5s;
+  transform: translateY(-30px);
+  box-shadow: 2px 2px 15px -8px black;
 }

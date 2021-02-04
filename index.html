@@ -14,7 +14,9 @@
   <body class="flexed">
     <div id="sectionOverflow"></div>
     <header class="flexed hdr">
-      <div class="logo"><img src="icons/logo.svg" style="height: 70px;"/></div>
+      <div class="logo">
+        <img src="icons/logo.svg" style="height: 70px;"/>
+        <span>Gif</span></div>
       <div class="inputs flexed">
         <label class="text-container"><input id="urlGifInput" type="text" placeholder="Введите URL гифки"/><div id="enterGifURL" class="flexed">‣</div></label>
         <p>или</p>
@@ -24,7 +26,6 @@
       </div>
     </header>
     <section class="main flexed">
-      <img id="gif" src="example.gif" style="height: 18%; margin-bottom: 30px;"/>
       <div id="frameInfo" class="flexed">
         <h3 id="frameNumber">FRAME-NUM</h3>
         <div class="flexed">
@@ -65,15 +66,21 @@
               <p>или</p>
               <label class="text-container"><input id="urlImageInput" type="text" placeholder="Введите URL изображения"/><div id="enterImgURL" class="flexed">‣</div></label>
             </div>
-            <span>Изображение будет отмасштабировано до размеров первого кадра.</span>
+            <span>Поддерживаются лишь изображения формата PNG и JPEG.<br />Изображение будет отмасштабировано до размеров первого кадра.</span>
           </div>
           <div id="uploadSequenceContainer" class="overflow-container flexed">
             <h3>Выберите последовательность кадров</h3>
             <label class="file-container"><input id="uploadSequenceInput" type="file" title="Выберите кадры" multiple="true"/><span>Выберите кадры</span></label>
             <span>Поддерживаются лишь изображения формата PNG и JPEG.<br />Все кадры будут отмасштабированы до размеров первого кадра.</span>
           </div>
+          <div id="selectSequenceContainer" class="overflow-container flexed">
+            <h3>Измените последовательность кадров</h3>
+            <div id="sequences" class="flexed"></div>
+            <button id="applySequences">Вставить кадры</button>
+          </div>
         </div>
       </div>
     </section>
+    <div id="toastContainer"></div>
   </body>
 </html>

@@ -1,10 +1,12 @@
 var frame = {
   selectedFrame: null,
+  selectedBtn: null,
   initialFrameCount: null,
   totalFrameCount: null,
   width: null,
   height: null,
-}
+};
+var dragged = null;
 
 function getRand(min, max) {
   min = Math.ceil(min);
@@ -22,7 +24,7 @@ function toggleVisible(block) {
   else {block.classList.add("visible"); return true;}
 }
 function openOverflowBox(name) {
-  toggleVisible(id("overflowContainer"));
+  id("overflowContainer").classList.add('visible');
   var block = id("overflow");
   for (var i=0; i<block.children.length; i++) block.children[i].style.display = "none";
   id(name).style.display = "flex";
@@ -53,14 +55,20 @@ window.onload = function() {
   id("sectionOverflow").addEventListener("mouseenter",function(){
     id("frameInfo").style.visibility = "hidden";
   });
-  var gif = new SuperGif({
-    gif: id("gif"),
-    auto_play: 0,
-  });
-  gif.load(gifCallback);
+  var gif = null;
 
   function updateInfoText() {
     id("gifInfo").innerText = `Текущее количество кадров: ${frame.totalFrameCount} • Начальное количество кадров: ${frame.initialFrameCount} • Начальная ширина: ${frame.width} • Начальная высота: ${frame.height}`;
+  }
+
+  function toastMsg(str) {
+    var msg = document.createElement('div');
+    msg.classList.add("toast");
+    msg.innerText = str;
+    id("toastContainer").prepend(msg);
+    setTimeout(() => {
+      msg.remove();
+    }, 3000);
   }
 
   function frameThumbnailEvent() {
@@ -76,7 +84,33 @@ window.onload = function() {
     }
   }
 
-  function createFrame(src) {
+  function addBlockEvent() {
+    frame.selectedBtn = [].indexOf.call(cl("add-frame-btn"), this);
+    openOverflowBox("uploadImageContainer");
+  }
+
+  function imageDragStartEvent(event) {
+    event.currentTarget.classList.add('draggable');
+    dragged = event.currentTarget;
+  }
+  function imageDropEvent(event) {
+    event.stopPropagation();
+    event.preventDefault();
+    event.currentTarget.classList.remove('draggable');
+    dragged.classList.remove('draggable');
+    if (dragged != event.currentTarget) {
+      var img1 = dragged.children[0], img2 = event.currentTarget.children[0];
+      dragged.append(img2); event.currentTarget.append(img1);
+    }
+  }
+  function imageDragOverEvent(event) {
+    event.preventDefault();
+  }
+  function imageDragEndEvent(event) {
+    event.currentTarget.classList.remove('draggable');
+  }
+
+  function createFrame(src, pos=undefined) {
     var img = new Image();
     img.classList.add("frame-thumbnail");
     img.src = src;
@@ -87,19 +121,24 @@ window.onload = function() {
      <div class="frame-overflow flexed"></div>
     `;
     imgCont.prepend(img);
-    id("frames").append(imgCont);
     var addBlock = document.createElement('div');
     addBlock.classList.add("add-frame-btn");
     addBlock.innerHTML = `<div class="flexed">+</div>`;
-    addBlock.addEventListener("click", function(){
-      openOverflowBox("uploadImageContainer");
-    });
-    id("frames").append(addBlock);
+    addBlock.addEventListener("click", addBlockEvent);
+    if (pos === undefined || pos > frame.totalFrameCount) {
+      id("frames").append(imgCont);
+      id("frames").append(addBlock);
+    }
+    else {
+      var fr = cl("frame")[frame.selectedBtn];
+      id("frames").insertBefore(imgCont, fr);
+      id("frames").insertBefore(addBlock, fr);
+    }
   }
 
   function generateGif() {
     console.log("Gif generation started");
-    var delay = id("gifDelay").value, w = id("gifWidth").value, h = id("gifHeight").value;
+    var delay = parseInt(id("gifDelay").value), w = id("gifWidth").value, h = id("gifHeight").value;
     var mDelay = id("gifDelay").getAttribute("min"), mWidth = id("gifWidth").getAttribute("min"), mHeight = id("gifHeight").getAttribute("min");
     if (delay < mDelay) {delay = mDelay; console.log("Delay is too small. Delay changed to "+delay+"ms");}
     if (w < mWidth) {w = mWidth; console.log("Width is too small. Width changed to "+w+"px");}
@@ -136,6 +175,7 @@ window.onload = function() {
       el.value = "";
       el.reset();
     });
+    id("sequences").innerHTML = "";
     toggleVisible(this.parentElement);
   });
 
@@ -158,6 +198,35 @@ window.onload = function() {
      cl("frame")[frame.selectedFrame].getElementsByTagName('img')[0].download();
    });
 
+   id("uploadImageInput").addEventListener("input", function(e){
+     var file = this.files[0];
+     if (file.type != "image/png" && file.type != "image/jpeg") {
+       toastMsg("Поддерживаются лишь изображения формата PNG и JPEG");
+       return;
+     }
+     var reader = new FileReader();
+     reader.onload = function() {
+       var img = new Image();
+       img.onload = function() {
+         if (img.width != frame.width || img.height != frame.height) {
+           var canv = document.createElement('canvas');
+           var c = canv.getContext('2d');
+           canv.width = frame.width; canv.height = frame.height;
+           c.drawImage(img,0,0,canv.width,canv.height);
+           img.src = canv.toDataURL();
+           return;
+         }
+         createFrame(img.src, frame.selectedBtn);
+         frame.totalFrameCount++;
+         updateInfoText();
+         id("uploadImageInput").value = "";
+         toggleVisible(id("overflowContainer"));
+       }
+       img.src = reader.result;
+     }
+     reader.readAsDataURL(file);
+   });
+
    id("uploadGifInput").addEventListener("input", function(e){
      var file = this.files[0];
      if (file.type == "image/gif") {
@@ -178,7 +247,7 @@ window.onload = function() {
        }
        reader.readAsDataURL(file);
      } else {
-       alert("Выбранный файл — не gif-изображение");
+       toastMsg("Выбранный файл — не gif-изображение");
        this.value = "";
        this.reset();
      }
@@ -186,53 +255,64 @@ window.onload = function() {
 
    id("uploadSequenceInput").addEventListener("input", function(e){
      var err = false;
-     var w = null, h = null;
-     var canv = document.createElement('canvas');
-     var c = canv.getContext('2d');
      if (!this.files.length) return;
      [].forEach.call(this.files, (el) => {
        if (el.type != "image/png" && el.type != "image/jpeg") {
-         alert("Поддерживаются лишь изображения формата PNG и JPEG");
+         toastMsg("Поддерживаются лишь изображения формата PNG и JPEG");
          err = true;
          throw "Only PNG and JPEG images are supported";
        }
      });
      if (err) return;
-     if (cl("jsgif")[0]) cl("jsgif")[0].remove();
-     id("frames").innerHTML = "";
-     var addBlock = document.createElement('div');
-     addBlock.classList.add("add-frame-btn");
-     addBlock.innerHTML = `<div class="flexed">+</div>`;
-     id("frames").append(addBlock);
      [].forEach.call(this.files, (el,ind,arr) => {
        var img = new Image();
        var reader = new FileReader();
        reader.onload = function() {
          img.onload = () => {
-           if (w === null && h === null) {
-             w = img.width; h = img.height;
-             canv.width = w; canv.height = h;
-             frame.width = w; frame.height = h;
-           }
-           if (img.width != w || img.height != h) {
-             c.clearRect(0,0,w,h);
-             c.drawImage(img,0,0,w,h);
-             img.src = canv.toDataURL();
-             return;
-           }
-           createFrame(img.src);
-           if (ind == arr.length - 1) {
-             frame.totalFrameCount = arr.length;
-             frame.initialFrameCount = frame.totalFrameCount;
-             id("gifWidth").value = frame.width; id("gifHeight").value = frame.height;
-             updateInfoText();
-           }
+           var container = document.createElement('div');
+           container.append(img);
+           container.setAttribute("id", "frame"+ind);
+           container.setAttribute("draggable", "true");
+           container.addEventListener("dragover", imageDragOverEvent);
+           container.addEventListener("dragstart", imageDragStartEvent);
+           container.addEventListener("dragend", imageDragEndEvent);
+           container.addEventListener("drop", imageDropEvent);
+           id("sequences").append(container);
+           if (ind == arr.length - 1) openOverflowBox("selectSequenceContainer");
          }
          img.src = reader.result;
        }
        reader.readAsDataURL(el);
      });
      console.log("frames sequences are loaded. Number of frames: " + this.files.length);
+   });
+
+   id("applySequences").addEventListener("click", function() {
+     var canv = document.createElement('canvas');
+     var c = canv.getContext('2d');
+     if (cl("jsgif")[0]) cl("jsgif")[0].remove();
+     id("frames").innerHTML = "";
+     var addBlock = document.createElement('div');
+     addBlock.classList.add("add-frame-btn");
+     addBlock.innerHTML = `<div class="flexed">+</div>`;
+     addBlock.addEventListener("click", addBlockEvent);
+     id("frames").append(addBlock);
+     frames = id("sequences").getElementsByTagName("img");
+     var w = frames[0].naturalWidth, h = frames[0].naturalHeight;
+     canv.width = w; canv.height = h;
+     [].forEach.call(frames, function(img, ind){
+       if (img.width != w || img.height != h) {
+         c.clearRect(0,0,w,h);
+         c.drawImage(img,0,0,w,h);
+         createFrame(canv.toDataURL());
+       } else createFrame(img.src);
+     });
+     frame.totalFrameCount = frames.length;
+     frame.initialFrameCount = frame.totalFrameCount;
+     frame.width = w; frame.height = h;
+     id("gifWidth").value = frame.width; id("gifHeight").value = frame.height;
+     updateInfoText();
+     toggleVisible(id("overflowContainer"));
    });
 
    id("downloadGif").addEventListener("click", function() {
@@ -314,6 +394,7 @@ window.onload = function() {
      var addBlock = document.createElement('div');
      addBlock.classList.add("add-frame-btn");
      addBlock.innerHTML = `<div class="flexed">+</div>`;
+     addBlock.addEventListener("click", addBlockEvent);
      id("frames").append(addBlock);
      for (var i=0; i<gif.get_length(); i++) {
        gif.move_to(i);
