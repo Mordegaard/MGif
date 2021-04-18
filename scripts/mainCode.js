@@ -8,21 +8,6 @@ var frame = {
 };
 var dragged = null;
 
-function getRand(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-function id(node) {
-  return document.getElementById(node);
-}
-function cl(node) {
-  return document.getElementsByClassName(node);
-}
-function toggleVisible(block) {
-  if ( block.classList.contains("visible") ) {block.classList.remove("visible"); return false;}
-  else {block.classList.add("visible"); return true;}
-}
 function openOverflowBox(name) {
   id("overflowContainer").classList.add('visible');
   var block = id("overflow");
@@ -78,9 +63,14 @@ window.onload = function() {
       this.parentElement.getElementsByClassName("frame-overflow")[0].innerText = "Кадр #"+(frame.selectedFrame+1);
       id("bigFrameThumbnail").src = this.src;
       var bl = id("frameInfo");
+      var sizes = this.getBoundingClientRect()
       bl.style.visibility = "visible";
-      bl.style.top = this.getBoundingClientRect().top + 'px';
-      bl.style.left = this.getBoundingClientRect().left + 'px';
+      bl.style.top = sizes.top + 'px';
+      let left = sizes.left + sizes.width/2 - bl.offsetWidth / 2;
+      console.log(left + bl.offsetWidth, window.innerWidth);
+      if (left < 0) left = 0;
+      else if (left + bl.offsetWidth > window.innerWidth) left = window.innerWidth - bl.offsetWidth;
+      bl.style.left = left + 'px';
     }
   }
 
@@ -145,9 +135,11 @@ window.onload = function() {
     if (h < mHeight) {h = mHeight; console.log("Height is too small. Height changed to "+h+"px");}
     var canv = document.createElement('canvas');
     var c = canv.getContext('2d');
+    cl("main")[0].prepend(canv);
     canv.width = w;
     canv.height = h;
     var encoder = new GIFEncoder();
+    encoder.setTransparent(0xffffff);
     encoder.setRepeat(0);
     encoder.setDelay(delay);
     encoder.start();
@@ -176,7 +168,7 @@ window.onload = function() {
       el.reset();
     });
     id("sequences").innerHTML = "";
-    toggleVisible(this.parentElement);
+    this.parentElement.changeVisible();
   });
 
   id("frames").addEventListener("wheel", function(event) {
@@ -220,7 +212,7 @@ window.onload = function() {
          frame.totalFrameCount++;
          updateInfoText();
          id("uploadImageInput").value = "";
-         toggleVisible(id("overflowContainer"));
+         id("overflowContainer").changeVisible();
        }
        img.src = reader.result;
      }
@@ -312,7 +304,7 @@ window.onload = function() {
      frame.width = w; frame.height = h;
      id("gifWidth").value = frame.width; id("gifHeight").value = frame.height;
      updateInfoText();
-     toggleVisible(id("overflowContainer"));
+     id("overflowContainer").changeVisible();
    });
 
    id("downloadGif").addEventListener("click", function() {
@@ -338,7 +330,8 @@ window.onload = function() {
        gif.load(gifCallback);
      }
      img.onerror = () => {
-       if (!err) {img.src = "https://cors-anywhere.herokuapp.com/"+url; err = true;}
+       if (!err) {img.src = "https://rocky-retreat-60875.herokuapp.com/"+url; err = true;}
+       else {toastMsg("Ошибка при загрузке гифки")}
      }
      img.src = url;
    });

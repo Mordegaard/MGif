@@ -148,7 +148,7 @@ GIFEncoder = function() {
 					if(!sizeset || width!=im.width || height!=im.height) {
 						setSize(im.width,im.height);
 					} else {
-						
+
 					}
 				} else if(im instanceof Uint8ClampedArray) {
 					if(im.length==(width*height*4)) {
@@ -188,7 +188,7 @@ GIFEncoder = function() {
 
 		return ok;
 	};
-	
+
 	/**
 	* @description: Downloads the encoded gif with the given name
 	* No need of any conversion from the stream data (out) to base64
@@ -198,10 +198,10 @@ GIFEncoder = function() {
 	* to just calling this function.
 	* @parameter {String} filename filename used for downloading the gif
 	*/
-	
+
 	var download = exports.download = function download(filename) {
 		if(out===null || closeStream==false) {
-			console.log("Please call start method and add frames and call finish method before calling download"); 
+			console.log("Please call start method and add frames and call finish method before calling download");
 		} else {
 			filename= filename !== undefined ? ( filename.endsWith(".gif")? filename: filename+".gif" ): "download.gif";
 			var templink = document.createElement("a");

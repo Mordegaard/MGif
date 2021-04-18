@@ -240,7 +240,7 @@ header.hdr .inputs p, #uploadImageContainer p {
   background: white;
   box-shadow: 3px 3px 16px -10px black;
   border-radius: 16px;
-  transform: translate(-30%, -100%);
+  transform: translate(0%, -100%);
   visibility: hidden;
   z-index: 2;
 }
